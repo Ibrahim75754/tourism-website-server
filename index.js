@@ -31,6 +31,12 @@ async function run() {
             const packages = await cursor.toArray();
             res.json(packages);
         });
+        //GET API All orders
+        app.get('/myOrders', async (req, res) => {
+            const cursor = ordersCollection.find({});
+            const orders = await cursor.toArray();
+            res.json(orders);
+        });
 
         //GET single Service API
         app.get('/packages/update/:id', async (req, res) => {
@@ -76,11 +82,18 @@ async function run() {
             res.json(result);
         });
 
-        //delete
+        //delete from package
         app.delete('/packages/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await packagesCollection.deleteOne(query);
+            res.json(result);
+        })
+        //delete from Orders
+        app.delete('/myOrders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await ordersCollection.deleteOne(query);
             res.json(result);
         })
 
