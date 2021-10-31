@@ -23,6 +23,7 @@ async function run() {
         console.log('connected to database');
         const database = client.db('travel');
         const packagesCollection = database.collection('packages');
+        const ordersCollection = database.collection('orders');
 
         //GET API All packages
         app.get('/packages', async (req, res) => {
@@ -40,11 +41,19 @@ async function run() {
             res.json(service);
         }); */
 
-        //POST API
+        //POST API for package
         app.post('/packages', async (req, res) => {
             const service = req.body;
             console.log('hit the post api', service);
             const result = await packagesCollection.insertOne(service);
+
+            res.json(result);
+        });
+        //POST API for place order
+        app.post('/placeOrder', async (req, res) => {
+            const order = req.body;
+            console.log('hit the post api', order);
+            const result = await ordersCollection.insertOne(order);
 
             res.json(result);
         });
