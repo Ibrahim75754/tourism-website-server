@@ -6,7 +6,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 //middleWire
 app.use(cors());
@@ -33,13 +33,31 @@ async function run() {
         });
 
         //GET single Service API
-        /* app.get('/packages/:id', async (req, res) => {
+        app.get('/packages/update/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-
-            const service = await packagesCollection.findOne(query);
-            res.json(service);
-        }); */
+            const package = await packagesCollection.findOne(query);
+            res.json(package);
+        });
+        //update
+        app.put('/packages/update/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatePackage = req.body;
+            console.log(updatePackage);
+            /* const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    img=updatePackage.img,
+                    name=updatePackage.name,
+                    description=updatePackage.description,
+                    price=updatePackage.price,
+                    duration=updatePackage.duration,
+                },
+            };
+            const result = await packagesCollection.updateOne(filter, updateDoc, options);
+            res.json(result); */
+        });
 
         //POST API for package
         app.post('/packages', async (req, res) => {
@@ -57,6 +75,14 @@ async function run() {
 
             res.json(result);
         });
+
+        //delete
+        app.delete('/packages/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await packagesCollection.deleteOne(query);
+            res.json(result);
+        })
 
     } finally {
         //   await client.close();
