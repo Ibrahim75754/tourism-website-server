@@ -25,53 +25,63 @@ async function run() {
         const packagesCollection = database.collection('packages');
         const ordersCollection = database.collection('orders');
 
-        //GET API All packages
-        app.get('/packages', async (req, res) => {
-            const cursor = packagesCollection.find({});
-            const packages = await cursor.toArray();
-            res.json(packages);
-        });
-        //GET API All orders
-        app.get('/myOrders', async (req, res) => {
-            const cursor = ordersCollection.find({});
-            const orders = await cursor.toArray();
-            res.json(orders);
-        });
-
-        //GET single Service API
-        app.get('/packages/update/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const package = await packagesCollection.findOne(query);
-            res.json(package);
-        });
-        //update
-        app.put('/packages/update/:id', async (req, res) => {
-            const id = req.params.id;
-            const updatePackage = req.body;
-            console.log(updatePackage);
-            /* const filter = { _id: ObjectId(id) };
-            const options = { upsert: true };
-            const updateDoc = {
-                $set: {
-                    img=updatePackage.img,
-                    name=updatePackage.name,
-                    description=updatePackage.description,
-                    price=updatePackage.price,
-                    duration=updatePackage.duration,
-                },
-            };
-            const result = await packagesCollection.updateOne(filter, updateDoc, options);
-            res.json(result); */
-        });
-
-        //POST API for package
+        //POST API for package.......... insert
         app.post('/packages', async (req, res) => {
             const service = req.body;
             console.log('hit the post api', service);
             const result = await packagesCollection.insertOne(service);
 
             res.json(result);
+        });
+        //GET All packages..........  show All
+        app.get('/packages', async (req, res) => {
+            const cursor = packagesCollection.find({});
+            const packages = await cursor.toArray();
+            res.json(packages);
+        });
+        //GET single Package API........show one
+        app.get('/packages/update/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const package = await packagesCollection.findOne(query);
+            res.json(package);
+        });
+        //update package........... update one
+        app.put('/packages/update/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatePackage = req.body;
+            console.log(updatePackage);
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    img: updatePackage.img,
+                    name: updatePackage.name,
+                    description: updatePackage.description,
+                    price: updatePackage.price,
+                    duration: updatePackage.duration,
+                },
+            };
+            const result = await packagesCollection.updateOne(filter, updateDoc, options);
+            res.json(result);
+        });
+        //delete from package............ delete one
+        app.delete('/packages/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await packagesCollection.deleteOne(query);
+            res.json(result);
+        });
+
+
+
+
+
+        //GET API All orders
+        app.get('/myOrders', async (req, res) => {
+            const cursor = ordersCollection.find({});
+            const orders = await cursor.toArray();
+            res.json(orders);
         });
         //POST API for place order
         app.post('/placeOrder', async (req, res) => {
@@ -81,21 +91,15 @@ async function run() {
 
             res.json(result);
         });
-
-        //delete from package
-        app.delete('/packages/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const result = await packagesCollection.deleteOne(query);
-            res.json(result);
-        })
         //delete from Orders
         app.delete('/myOrders/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await ordersCollection.deleteOne(query);
             res.json(result);
-        })
+        });
+
+
 
     } finally {
         //   await client.close();
